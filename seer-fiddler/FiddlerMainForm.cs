@@ -50,7 +50,7 @@ namespace seer_fiddler
             {
                 Global.transparentDic["transparentPet"] = result == "1";
             }
-            iniFile = new IniFile(iniFilePath);
+
             result = iniFile.Read("config", "transparentSkill");
             if (result == null  || (result != "0" && result != "1"))
             {
@@ -60,6 +60,17 @@ namespace seer_fiddler
             else
             {
                 Global.transparentDic["transparentSkill"] = result == "1";
+            }
+
+            result = iniFile.Read("config", "batteryDormantSwitch");
+            if (result == null  || (result != "0" && result != "1"))
+            {
+                iniFile.Write("config", "batteryDormantSwitch", "0");
+                Global.transparentDic["batteryDormantSwitch"] = true;
+            }
+            else
+            {
+                Global.transparentDic["batteryDormantSwitch"] = result == "0";
             }
         }
 
@@ -110,7 +121,7 @@ namespace seer_fiddler
                 Dictionary<int, int> planDic = new Dictionary<int, int>();
                 foreach (DBServise.PetSkinsReplacePlan plan in plans)
                 {
-                    planDic.Add(plan.petId, plan.skinsId);
+                    planDic.Add(plan.petId, DBServise.PetTableGetRealId(plan.skinsId));
                 }
                 Global.petSkinsPlanDic = planDic;
             }

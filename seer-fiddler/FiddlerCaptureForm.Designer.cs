@@ -28,14 +28,20 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FiddlerCaptureForm));
             this.requestListBox = new System.Windows.Forms.ListBox();
             this.removeAllItemBtn = new System.Windows.Forms.Button();
             this.startCapturecheckBox = new System.Windows.Forms.CheckBox();
+            this.tcpCaputureContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.removeAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tcpCaputureContextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // requestListBox
             // 
+            this.requestListBox.ContextMenuStrip = this.tcpCaputureContextMenuStrip;
             this.requestListBox.FormattingEnabled = true;
             this.requestListBox.ItemHeight = 12;
             this.requestListBox.Location = new System.Drawing.Point(1, 0);
@@ -65,6 +71,28 @@
             this.startCapturecheckBox.Text = "开始捕获";
             this.startCapturecheckBox.UseVisualStyleBackColor = true;
             // 
+            // tcpCaputureContextMenuStrip
+            // 
+            this.tcpCaputureContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.removeAllToolStripMenuItem,
+            this.copyToolStripMenuItem});
+            this.tcpCaputureContextMenuStrip.Name = "tcpCaputureContextMenuStrip";
+            this.tcpCaputureContextMenuStrip.Size = new System.Drawing.Size(181, 70);
+            // 
+            // removeAllToolStripMenuItem
+            // 
+            this.removeAllToolStripMenuItem.Name = "removeAllToolStripMenuItem";
+            this.removeAllToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.removeAllToolStripMenuItem.Text = "清空";
+            this.removeAllToolStripMenuItem.Click += new System.EventHandler(this.removeAllToolStripMenuItem_Click);
+            // 
+            // copyToolStripMenuItem
+            // 
+            this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
+            this.copyToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.copyToolStripMenuItem.Text = "复制";
+            this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
+            // 
             // FiddlerCaptureForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -80,6 +108,7 @@
             this.Text = "赛尔号封包捕获窗口";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FiddlerCaptureForm_FormClosing);
             this.Load += new System.EventHandler(this.FiddlerForm_Load);
+            this.tcpCaputureContextMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -90,6 +119,9 @@
         private System.Windows.Forms.ListBox requestListBox;
         private System.Windows.Forms.Button removeAllItemBtn;
         private System.Windows.Forms.CheckBox startCapturecheckBox;
+        private System.Windows.Forms.ContextMenuStrip tcpCaputureContextMenuStrip;
+        private System.Windows.Forms.ToolStripMenuItem removeAllToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
     }
 }
 

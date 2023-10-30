@@ -11,7 +11,8 @@ namespace seer_fiddler.core
         public static Dictionary<string, bool> transparentDic = new Dictionary<string, bool>()
         {
             { "transparentPet", true },
-            { "transparentSkill",true }
+            { "transparentSkill",true },
+            { "batteryDormantSwitch",true },
         };
     }
     public class IniFile

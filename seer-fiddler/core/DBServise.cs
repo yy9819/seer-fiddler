@@ -35,10 +35,47 @@ namespace seer_fiddler.core
                     return result.Count > 0 ? result : null;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //Console.WriteLine($"数据库精灵皮肤替换方案数据信息查询失败！ errorMessage：{ex.Message}");
                 return null;
+            }
+        }
+        public static int PetTableGetRealId(int petId)
+        {
+            try
+            {
+                using (db)
+                {
+                    db.Open();
+                    SqliteCommand selectCmd;
+                    if (petId < 1400000)
+                    {
+                        string selectSql = "SELECT pet_realId " +
+                        "FROM pet WHERE pet_id = @petId;";
+                        selectCmd = new SqliteCommand(selectSql, db);
+                        selectCmd.Parameters.Add(new SqliteParameter("@petId", $"{petId}"));
+                    }
+                    else
+                    {
+                        string selectSql = "SELECT pet_skins_realid " +
+                        "FROM petskins WHERE pet_skins_id = @petId;";
+                        selectCmd = new SqliteCommand(selectSql, db);
+                        selectCmd.Parameters.Add(new SqliteParameter("@petId", $"{petId}"));
+                    }
+                    SqliteDataReader reader = selectCmd.ExecuteReader();
+                    int realId = 0;
+                    while (reader.Read())
+                    {
+                        realId = reader.GetInt32(0);
+                    }
+                    return realId == 0 ? petId : realId;
+
+                }
+            }
+            catch (Exception)
+            {
+                return petId;
             }
         }
         public class PetSkinsReplacePlan

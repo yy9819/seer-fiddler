@@ -16,37 +16,6 @@ namespace seer_fiddler.core
         /// <param name="session">请求session</param>
         private delegate void AnalyzeBeforeRequestMethod(Session session, string[] pathList);
         private static FiddlerCaptureForm form;
-        private delegate void addResponseCallback();
-        /// <summary>
-        /// key:请求字符串
-        /// value:需要执行的reques请求
-        /// </summary>
-        private static Dictionary<string, AnalyzeBeforeRequestMethod> beforeRequestDictionary = new Dictionary<string, AnalyzeBeforeRequestMethod>()
-        {
-            { "resource" , (session , path) => AnalyzeResouceRequestHandle(session , path) }
-        };
-        private static Dictionary<string, AnalyzeBeforeRequestMethod> resourceRequestDictionary = new Dictionary<string, AnalyzeBeforeRequestMethod>()
-        {
-            { "login" , (session , path) => AnalyzeLoginRequestHandle(session , path) }
-        };
-
-
-        private delegate void AnalyzeBeforeResponseMethod(Session session, string[] pathList);
-        private static Dictionary<string, AnalyzeBeforeResponseMethod> beforeResponseDictionary = new Dictionary<string, AnalyzeBeforeResponseMethod>()
-        {
-            { "resource" , (session , path) => AnalyzeResouceResponseHandle(session , path) }
-        };
-        private static Dictionary<string, AnalyzeBeforeResponseMethod> resourceReponseDictionary = new Dictionary<string, AnalyzeBeforeResponseMethod>()
-        {
-            { "fightResource" , (session , path) => AnalyzeFightResourceResponseHandle(session , path) }
-        };
-        private static Dictionary<string, AnalyzeBeforeResponseMethod> fightResourceReponseDictionary = new Dictionary<string, AnalyzeBeforeResponseMethod>()
-        {
-            { "pet" , (session , path) => AnalyzePetFightResourceResponseHandle(session , path) },
-            { "skill" , (session , path) => AnalyzeSkillFightResourceResponseHandle(session , path) },
-        };
-
-
         //private static string[] requestBeforePathList; 
 
         public SeerFiddler(FiddlerCaptureForm mainForm)
@@ -117,6 +86,26 @@ namespace seer_fiddler.core
         }
         #region
         /*=========================================request处理================================================*/
+        private delegate void addResponseCallback();
+        /// <summary>
+        /// key:请求字符串
+        /// value:需要执行的reques请求
+        /// </summary>
+        private static Dictionary<string, AnalyzeBeforeRequestMethod> beforeRequestDictionary = new Dictionary<string, AnalyzeBeforeRequestMethod>()
+        {
+            { "resource" , (session , path) => AnalyzeResouceRequestHandle(session , path) },
+        };
+        private static Dictionary<string, AnalyzeBeforeRequestMethod> resourceRequestDictionary = new Dictionary<string, AnalyzeBeforeRequestMethod>()
+        {
+            { "fightResource" , (session , path) => AnalyzeFightResourceRquestHandle(session , path) },
+            { "login" , (session , path) => TobBufferResponseRequestHandle(session , path) },
+            { "forApp" , (session , path) => TobBufferResponseRequestHandle(session , path) },
+        };
+        private static Dictionary<string, AnalyzeBeforeRequestMethod> fightResourceRequestDictionary = new Dictionary<string, AnalyzeBeforeRequestMethod>()
+        {
+            { "pet" , (session , path) => TobBufferResponseRequestHandle(session , path) },
+            { "skill" , (session , path) => TobBufferResponseRequestHandle(session , path) },
+        };
         private static void FiddlerApplication_BeforeRequest(Session session)
         {
             if (session.isHTTPS && session.host == "seer.61.com")
@@ -133,19 +122,10 @@ namespace seer_fiddler.core
                     }
 
                 }).Start();
-
-                if (session.PathAndQuery.Contains("mp3"))
+                string[] requestBeforePathList = session.PathAndQuery.Split('.')[0].Split('/');
+                if (beforeRequestDictionary.TryGetValue(requestBeforePathList[1], out AnalyzeBeforeRequestMethod analyzeBeforeRequestMethod))
                 {
-                    session.Abort();
-                }
-                else
-                {
-                    string[] requestBeforePathList = session.PathAndQuery.Split('.')[0].Split('/');
-                    session.bBufferResponse = true;
-                    if (beforeRequestDictionary.TryGetValue(requestBeforePathList[1], out AnalyzeBeforeRequestMethod analyzeBeforeRequestMethod))
-                    {
-                        analyzeBeforeRequestMethod(session, requestBeforePathList);
-                    }
+                    analyzeBeforeRequestMethod(session, requestBeforePathList);
                 }
 
 
@@ -160,24 +140,38 @@ namespace seer_fiddler.core
                 analyzeBeforeRequestMethod(session, pathList);
             }
         }
-        private static void AnalyzeLoginRequestHandle(Session session, string[] pathList)
+        private static void AnalyzeFightResourceRquestHandle(Session session, string[] pathList)
         {
-            //Console.WriteLine(pathList[3]);
-            switch (pathList[3])
+            if (fightResourceRequestDictionary.TryGetValue(pathList[3], out AnalyzeBeforeRequestMethod analyzeBeforeRequestMethod))
             {
-                case "ServerAdPanel1":
-                    session.Abort();
-                    break;
+                analyzeBeforeRequestMethod(session, pathList);
             }
-            //if (session.PathAndQuery.Contains("ServerAdPanel1"))
-            //{
-            //    //session.state = SessionStates.Aborted;
-            //    session.Abort();
-            //}
+        }
+        private static void TobBufferResponseRequestHandle(Session session, string[] pathList)
+        {
+            session.bBufferResponse = true;
         }
         #endregion
+
         #region
         /*=========================================response处理================================================*/
+
+        private delegate void AnalyzeBeforeResponseMethod(Session session, string[] pathList);
+        private static Dictionary<string, AnalyzeBeforeResponseMethod> beforeResponseDictionary = new Dictionary<string, AnalyzeBeforeResponseMethod>()
+        {
+            { "resource" , (session , path) => AnalyzeResouceResponseHandle(session , path) }
+        };
+        private static Dictionary<string, AnalyzeBeforeResponseMethod> resourceReponseDictionary = new Dictionary<string, AnalyzeBeforeResponseMethod>()
+        {
+            { "fightResource" , (session , path) => AnalyzeFightResourceResponseHandle(session , path) },
+            { "login" , (session , path) => AnalyzeLoginResponseHandle(session , path) },
+            { "forApp" , (session , path) => AnalyzeForAppResponseHandle(session , path) },
+        };
+        private static Dictionary<string, AnalyzeBeforeResponseMethod> fightResourceReponseDictionary = new Dictionary<string, AnalyzeBeforeResponseMethod>()
+        {
+            { "pet" , (session , path) => AnalyzePetFightResourceResponseHandle(session , path) },
+            { "skill" , (session , path) => AnalyzeSkillFightResourceResponseHandle(session , path) },
+        };
         private static void FiddlerApplication_BeforeResponse(Session session)
         {
             //Console.WriteLine($"{session.isTunnel}  {session.host == "seer.61.com"}  {BitConverter.ToString(session.ResponseBody)}");
@@ -206,6 +200,26 @@ namespace seer_fiddler.core
                 analyzeBeforeResponseMethod(session, pathList);
             }
         }
+
+        private static void AnalyzeLoginResponseHandle(Session session, string[] pathList)
+        {
+            switch (pathList[3])
+            {
+                case "ServerAdPanel1":
+                    session.Abort();
+                    break;
+            }
+        }
+        private static void AnalyzeForAppResponseHandle(Session session, string[] pathList)
+        {
+            switch (pathList[3])
+            {
+                case "security_protection":
+                    session.Abort();
+                    break;
+            }
+        }
+
 
         private static void AnalyzePetFightResourceResponseHandle(Session session, string[] pathList)
         {

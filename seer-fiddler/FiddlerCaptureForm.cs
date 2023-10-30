@@ -41,5 +41,19 @@ namespace seer_fiddler
         {
             this.requestListBox.Items.Clear();
         }
+
+        private void removeAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.requestListBox.Items.Clear();
+        }
+
+        private void copyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Clipboard.SetText(Convert.ToString(this.requestListBox.SelectedItem));
+            }
+            catch { }
+        }
     }
 }
