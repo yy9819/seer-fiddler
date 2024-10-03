@@ -63,9 +63,29 @@ namespace seer_fiddler.Properties {
         /// <summary>
         ///   查找 System.Byte[] 类型的本地化资源。
         /// </summary>
+        internal static byte[] CountermarkCenterNewPanel_2016 {
+            get {
+                object obj = ResourceManager.GetObject("CountermarkCenterNewPanel_2016", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Byte[] 类型的本地化资源。
+        /// </summary>
         internal static byte[] pet {
             get {
                 object obj = ResourceManager.GetObject("pet", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Byte[] 类型的本地化资源。
+        /// </summary>
+        internal static byte[] ServerAdPanel1 {
+            get {
+                object obj = ResourceManager.GetObject("ServerAdPanel1", resourceCulture);
                 return ((byte[])(obj));
             }
         }

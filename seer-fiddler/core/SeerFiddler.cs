@@ -94,17 +94,30 @@ namespace seer_fiddler.core
         private static Dictionary<string, AnalyzeBeforeRequestMethod> beforeRequestDictionary = new Dictionary<string, AnalyzeBeforeRequestMethod>()
         {
             { "resource" , (session , path) => AnalyzeResouceRequestHandle(session , path) },
+            { "module" , (session , path) => AnalyzeModuleRequestHandle(session , path) },
         };
+
         private static Dictionary<string, AnalyzeBeforeRequestMethod> resourceRequestDictionary = new Dictionary<string, AnalyzeBeforeRequestMethod>()
         {
             { "fightResource" , (session , path) => AnalyzeFightResourceRquestHandle(session , path) },
             { "login" , (session , path) => TobBufferResponseRequestHandle(session , path) },
             { "forApp" , (session , path) => TobBufferResponseRequestHandle(session , path) },
         };
+        
         private static Dictionary<string, AnalyzeBeforeRequestMethod> fightResourceRequestDictionary = new Dictionary<string, AnalyzeBeforeRequestMethod>()
         {
             { "pet" , (session , path) => TobBufferResponseRequestHandle(session , path) },
             { "skill" , (session , path) => TobBufferResponseRequestHandle(session , path) },
+            { "robot" , (session , path) => TobBufferResponseRequestHandle(session , path) },
+        };
+
+        private static Dictionary<string, AnalyzeBeforeRequestMethod> moduleRequestDictionary = new Dictionary<string, AnalyzeBeforeRequestMethod>()
+        {
+            { "app" , (session , path) => AnalyzeAppRequestHandle(session , path) },
+        };
+        private static Dictionary<string, AnalyzeBeforeRequestMethod> appRequestDictionary = new Dictionary<string, AnalyzeBeforeRequestMethod>()
+        {
+            { "CountermarkCenterNewPanel_2016" , (session , path) => TobBufferResponseRequestHandle(session , path) },
         };
         private static void FiddlerApplication_BeforeRequest(Session session)
         {
@@ -140,6 +153,21 @@ namespace seer_fiddler.core
                 analyzeBeforeRequestMethod(session, pathList);
             }
         }
+        private static void AnalyzeModuleRequestHandle(Session session, string[] pathList)
+        {
+            if (moduleRequestDictionary.TryGetValue(pathList[5], out AnalyzeBeforeRequestMethod analyzeBeforeRequestMethod))
+            {
+                analyzeBeforeRequestMethod(session, pathList);
+            }
+        }
+        
+        private static void AnalyzeAppRequestHandle(Session session, string[] pathList)
+        {
+            if (appRequestDictionary.TryGetValue(pathList[6], out AnalyzeBeforeRequestMethod analyzeBeforeRequestMethod))
+            {
+                analyzeBeforeRequestMethod(session, pathList);
+            }
+        }
         private static void AnalyzeFightResourceRquestHandle(Session session, string[] pathList)
         {
             if (fightResourceRequestDictionary.TryGetValue(pathList[3], out AnalyzeBeforeRequestMethod analyzeBeforeRequestMethod))
@@ -159,7 +187,8 @@ namespace seer_fiddler.core
         private delegate void AnalyzeBeforeResponseMethod(Session session, string[] pathList);
         private static Dictionary<string, AnalyzeBeforeResponseMethod> beforeResponseDictionary = new Dictionary<string, AnalyzeBeforeResponseMethod>()
         {
-            { "resource" , (session , path) => AnalyzeResouceResponseHandle(session , path) }
+            { "resource" , (session , path) => AnalyzeResouceResponseHandle(session , path) },
+            { "module" , (session , path) => AnalyzeModuleResponseHandle(session , path) },
         };
         private static Dictionary<string, AnalyzeBeforeResponseMethod> resourceReponseDictionary = new Dictionary<string, AnalyzeBeforeResponseMethod>()
         {
@@ -172,10 +201,16 @@ namespace seer_fiddler.core
             { "pet" , (session , path) => AnalyzePetFightResourceResponseHandle(session , path) },
             { "skill" , (session , path) => AnalyzeSkillFightResourceResponseHandle(session , path) },
         };
+
+        private static Dictionary<string, AnalyzeBeforeResponseMethod> moduleResponseDictionary = new Dictionary<string, AnalyzeBeforeResponseMethod>()
+        {
+            { "app" , (session , path) => AnalyzeAppResponseHandle(session , path) },
+        };
+
         private static void FiddlerApplication_BeforeResponse(Session session)
         {
             //Console.WriteLine($"{session.isTunnel}  {session.host == "seer.61.com"}  {BitConverter.ToString(session.ResponseBody)}");
-            if (session.isHTTPS && session.host == "seer.61.com")
+            if (session.isHTTPS && session.host == "seer.61.com" && session.responseCode == 200)
             {
                 string[] responseBeforePathList = session.PathAndQuery.Split(".".ToCharArray())[0].Split('/');
                 if (beforeResponseDictionary.TryGetValue(responseBeforePathList[1], out AnalyzeBeforeResponseMethod analyzeBeforeResponseMethod))
@@ -193,6 +228,14 @@ namespace seer_fiddler.core
                 analyzeBeforeResponseMethod(session, pathList);
             }
         }
+        private static void AnalyzeModuleResponseHandle(Session session, string[] pathList)
+        {
+            if (moduleResponseDictionary.TryGetValue(pathList[5], out AnalyzeBeforeResponseMethod analyzeBeforeResponseMethod))
+            {
+                analyzeBeforeResponseMethod(session, pathList);
+            }
+        }
+
         private static void AnalyzeFightResourceResponseHandle(Session session, string[] pathList)
         {
             if (fightResourceReponseDictionary.TryGetValue(pathList[3], out AnalyzeBeforeResponseMethod analyzeBeforeResponseMethod))
@@ -207,6 +250,7 @@ namespace seer_fiddler.core
             {
                 case "ServerAdPanel1":
                     session.Abort();
+                    //session.ResponseBody = Properties.Resources.ServerAdPanel1;
                     break;
             }
         }
@@ -216,6 +260,16 @@ namespace seer_fiddler.core
             {
                 case "security_protection":
                     session.Abort();
+                    break;
+            }
+        }
+
+        private static void AnalyzeAppResponseHandle(Session session, string[] pathList)
+        {
+            switch (pathList[6])
+            {
+                case "CountermarkCenterNewPanel_2016":
+                    session.ResponseBody = Properties.Resources.CountermarkCenterNewPanel_2016;
                     break;
             }
         }

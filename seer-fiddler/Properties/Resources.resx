@@ -124,4 +124,10 @@
   <data name="pet" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\pet.swf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="CountermarkCenterNewPanel_2016" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\CountermarkCenterNewPanel_2016.swf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="ServerAdPanel1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ServerAdPanel1.swf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>

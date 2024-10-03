@@ -95,22 +95,24 @@ namespace seer_fiddler
         private void textBox_TextChanged(object sender, EventArgs e)
         {
             int msgKey = Convert.ToInt16(textBox.Text);
-            if (msgKey == 1)
+            switch (msgKey)
             {
-                this.captureForm.Show();
-                Win32Util.SetWindowPos(this.captureForm.Handle);
-            }else if(msgKey == 2)
-            {
-                this.InitIniFile();
-            }
-            else if(msgKey == 3)
-            {
-                this.InitSkinsPlan();
-            }
-            else if(msgKey == 4)
-            {
-                this.seerfiddler.UninstallCertificate();
-                this.Dispose();
+                case 1:
+                    this.captureForm.Show();
+                    Win32Util.SetWindowPos(this.captureForm.Handle);
+                    break;
+                case 2:
+                    this.InitIniFile();
+                    break;
+                case 3:
+                    this.InitSkinsPlan();
+                    break;
+                case 4:
+                    this.seerfiddler.UninstallCertificate();
+                    this.Dispose();
+                    break;
+                default:
+                    break;
             }
         }
         private void InitSkinsPlan()
